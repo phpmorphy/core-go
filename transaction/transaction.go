@@ -51,7 +51,7 @@ func (t *Transaction) SetVersion(ver uint8) *Transaction {
 	return t
 }
 
-func (t *Transaction) Sender() address.Address {
+func (t *Transaction) Sender() *address.Address {
 	return address.FromBytes(t.Bytes[1:35])
 }
 
@@ -60,7 +60,7 @@ func (t *Transaction) SetSender(adr address.Address) *Transaction {
 	return t
 }
 
-func (t *Transaction) Recipient() address.Address {
+func (t *Transaction) Recipient() *address.Address {
 	return address.FromBytes(t.Bytes[35:69])
 }
 
