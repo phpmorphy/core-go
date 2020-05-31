@@ -50,6 +50,10 @@ func (a *Address) Version() uint16 {
 	return binary.BigEndian.Uint16(a.Bytes[0:2])
 }
 
+func (a *Address) Prefix() string {
+	return util.VersionToPrefix(a.Version())
+}
+
 func (a *Address) SetVersion(ver uint16) *Address {
 	binary.BigEndian.PutUint16(a.Bytes[0:2], ver)
 	return a

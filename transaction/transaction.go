@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/umi-top/umi-core/address"
 	"github.com/umi-top/umi-core/key"
+	"github.com/umi-top/umi-core/util"
 )
 
 const Length = 150
@@ -71,6 +72,10 @@ func (t *Transaction) SetRecipient(adr address.Address) *Transaction {
 
 func (t *Transaction) Value() uint64 {
 	return binary.BigEndian.Uint64(t.Bytes[69:77])
+}
+
+func (t *Transaction) Prefix() string {
+	return util.VersionToPrefix(binary.BigEndian.Uint16(t.Bytes[35:37]))
 }
 
 func (t *Transaction) SetValue(v uint64) *Transaction {
