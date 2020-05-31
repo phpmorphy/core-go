@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
 	"errors"
@@ -104,10 +105,46 @@ func (t *Transaction) SetSignature(s []byte) *Transaction {
 }
 
 func (t *Transaction) Verify() error {
+	if t.Version() == 0 {
+		return errors.New("invalid version")
+	}
+
+	if t.Version() == 1 {
+		if t.Value() > 90_071_992_547_409_91 {
+			return errors.New("invalid value")
+		}
+
+		if bytes.Equal(t.Sender().Bytes, t.Recipient().Bytes) {
+			return errors.New("invalid recipient")
+		}
+	}
+
+	if t.Version() == 2 || t.Version() == 3 {
+		if t.Prefix() == "umi" {
+			return errors.New("invalid prefix")
+		}
+
+		if t.ProfitPercent() > 500 || t.ProfitPercent() < 100 {
+			return errors.New("invalid profit percent")
+		}
+
+		if t.FeePercent() > 2000 {
+			return errors.New("invalid fee percent")
+		}
+	}
+
 	if !t.Sender().PublicKey().VerifySignature(t.Bytes[0:85], t.Bytes[85:149]) {
 		return errors.New("invalid signature")
 	}
 	return nil
+}
+
+func (t *Transaction) ProfitPercent() uint16 {
+	return binary.BigEndian.Uint16(t.Bytes[37:39])
+}
+
+func (t *Transaction) FeePercent() uint16 {
+	return binary.BigEndian.Uint16(t.Bytes[39:41])
 }
 
 func (t *Transaction) Sign(key key.SecretKey) *Transaction {
