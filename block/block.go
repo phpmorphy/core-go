@@ -89,10 +89,10 @@ func (b *Block) PublicKey() *key.PublicKey {
 	return key.NewPublicKey(b.Bytes[71:103])
 }
 
-func (b *Block) SetPublicKey(k key.PublicKey) *Block {
-	copy(b.Bytes[71:103], k.ToBytes())
-	return b
-}
+//func (b *Block) SetPublicKey(k *key.PublicKey) *Block {
+//	copy(b.Bytes[71:103], k.ToBytes())
+//	return b
+//}
 
 func (b *Block) Signature() []byte {
 	s := make([]byte, 64)
@@ -100,7 +100,8 @@ func (b *Block) Signature() []byte {
 	return s
 }
 
-func (b *Block) Sign(k key.SecretKey) *Block {
+func (b *Block) Sign(k *key.SecretKey) *Block {
+	copy(b.Bytes[71:103], k.PublicKey().ToBytes())
 	copy(b.Bytes[103:167], k.Sign(b.Bytes[0:103]))
 	return b
 }
@@ -114,4 +115,8 @@ func (b *Block) AppendTransaction(t *transaction.Transaction) *Block {
 	b.setTxCount(b.TxCount() + 1)
 	b.Bytes = append(b.Bytes, t.ToBytes()...)
 	return b
+}
+
+func (b *Block) Verify() bool {
+	return b.PublicKey().VerifySignature(b.Bytes[0:103], b.Bytes[103:167])
 }
