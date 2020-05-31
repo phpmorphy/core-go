@@ -56,7 +56,7 @@ func (t *Transaction) Sender() *address.Address {
 	return address.FromBytes(t.Bytes[1:35])
 }
 
-func (t *Transaction) SetSender(adr address.Address) *Transaction {
+func (t *Transaction) SetSender(adr *address.Address) *Transaction {
 	copy(t.Bytes[1:35], adr.ToBytes())
 	return t
 }
@@ -65,7 +65,7 @@ func (t *Transaction) Recipient() *address.Address {
 	return address.FromBytes(t.Bytes[35:69])
 }
 
-func (t *Transaction) SetRecipient(adr address.Address) *Transaction {
+func (t *Transaction) SetRecipient(adr *address.Address) *Transaction {
 	copy(t.Bytes[35:69], adr.ToBytes())
 	return t
 }

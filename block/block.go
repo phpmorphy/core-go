@@ -85,7 +85,7 @@ func (b *Block) setTxCount(n uint16) *Block {
 	return b
 }
 
-func (b *Block) PublicKey() key.PublicKey {
+func (b *Block) PublicKey() *key.PublicKey {
 	return key.NewPublicKey(b.Bytes[71:103])
 }
 

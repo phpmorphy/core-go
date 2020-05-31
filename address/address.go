@@ -59,7 +59,7 @@ func (a *Address) SetVersion(ver uint16) *Address {
 	return a
 }
 
-func (a *Address) PublicKey() key.PublicKey {
+func (a *Address) PublicKey() *key.PublicKey {
 	return key.NewPublicKey(a.Bytes[2:34])
 }
 
