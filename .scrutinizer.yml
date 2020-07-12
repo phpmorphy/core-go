@@ -11,9 +11,15 @@ build:
           - govet-run
           - golint-run
     tests:
+      project_setup:
+        override:
+          - true
       tests:
         override:
           - command: go test ./... -coverprofile=cover.out
             coverage:
               file: 'cover.out'
               format: 'go-cc'
+filter:
+  excluded_paths:
+    - "*_test.go"
