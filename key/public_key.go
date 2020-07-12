@@ -18,29 +18,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package util
+package key
 
 import (
-	"strings"
+	"crypto/ed25519"
 )
 
-func PrefixToVersion(p string) uint16 {
-	if strings.Compare(p, "genesis") == 0 {
-		return 0
-	}
-
-	return (uint16(p[0]-96) << 10) + (uint16(p[1]-96) << 5) + uint16(p[2]-96)
+type PublicKey struct {
+	key ed25519.PublicKey
 }
 
-func VersionToPrefix(v uint16) string {
-	if v == 0 {
-		return "genesis"
-	}
+func NewPublicKey(b []byte) *PublicKey {
+	key := make(ed25519.PublicKey, ed25519.PublicKeySize)
+	copy(key, b)
 
-	p := make([]byte, 3)
-	p[0] = uint8(v&0x7C00>>10) + 96
-	p[1] = uint8(v&0x03E0>>5) + 96
-	p[2] = uint8(v&0x001F) + 96
+	return &PublicKey{key: key}
+}
 
-	return string(p)
+func (p *PublicKey) PublicKey() *PublicKey {
+	return p
+}
+
+func (p *PublicKey) VerifySignature(sig []byte, msg []byte) bool {
+	return ed25519.Verify(p.key, msg, sig)
+}
+
+func (p *PublicKey) ToBytes() []byte {
+	b := make([]byte, ed25519.PublicKeySize)
+	copy(b, p.key)
+
+	return b
 }
